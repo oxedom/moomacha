@@ -2,9 +2,525 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>moo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moomacha — A Matcha-Fueled Marketing Agency</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-ink: #4B3B31;
+    --color-ink-soft: #6E5A4D;
+    --color-ink-faint: #9A877A;
+    --color-cream: #FFF7EB;
+    --color-cream-deep: #FBEFDD;
+    --color-white: #FFFFFF;
+    --color-matcha: #A8C48A;
+    --color-matcha-deep: #88A86A;
+    --color-matcha-soft: #E7EFD9;
+    --color-peach: #FFD6C2;
+    --color-peach-deep: #F2A98C;
+    --color-peach-soft: #FFE9DF;
+    --color-blue: #7EA6D6;
+    --color-blue-deep: #5C84B4;
+    --color-blue-soft: #E0EAF5;
+    --color-yellow: #EAD98C;
+    --color-yellow-deep: #CBB85F;
+    --color-yellow-soft: #FAF2D2;
+
+    --bg-page: var(--color-cream);
+    --surface-card: var(--color-white);
+    --text-heading: var(--color-ink);
+    --text-body: var(--color-ink-soft);
+    --text-subtle: var(--color-ink-faint);
+    --text-on-brand: var(--color-white);
+    --brand-primary: var(--color-matcha);
+    --border-card: #F0E7DA;
+    --accent-grow: var(--color-matcha-deep);
+
+    --font-sans: 'Poppins', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+    --weight-body: 400;
+    --weight-sub: 600;
+    --weight-head: 700;
+    --text-h2: 34px;
+    --text-h4: 20px;
+    --text-eyebrow: 14px;
+    --text-lg: 18px;
+    --text-base: 16px;
+    --text-sm: 14px;
+    --leading-tight: 1.08;
+    --leading-snug: 1.3;
+    --leading-body: 1.6;
+    --tracking-eyebrow: 0.14em;
+    --tracking-tight: -0.01em;
+
+    --space-5: 24px;
+    --space-6: 32px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-pill: 999px;
+
+    --shadow-sm: 0 4px 12px rgba(75, 59, 49, 0.07);
+    --shadow-card: 0 12px 30px rgba(75, 59, 49, 0.08);
+    --shadow-cta: 0 8px 18px rgba(136, 168, 106, 0.35);
+
+    --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-fast: 140ms;
+    --dur-base: 220ms;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: var(--weight-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    color: var(--text-body);
+    background: var(--bg-page);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+    color: var(--text-heading);
+    font-weight: var(--weight-head);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    margin: 0 0 0.4em;
+    text-wrap: balance;
+  }
+
+  p { margin: 0 0 1em; text-wrap: pretty; }
+
+  a {
+    color: var(--color-blue-deep);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-soft);
+  }
+  a:hover { color: var(--color-blue); }
+
+  .moo-eyebrow {
+    font-size: var(--text-eyebrow);
+    font-weight: var(--weight-sub);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent-grow);
+  }
+
+  ::selection { background: var(--color-matcha-soft); color: var(--color-ink); }
+
+  /* Layout helpers */
+  .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--color-white); border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm); padding: 14px 22px;
+    max-width: 1140px; margin: 20px auto 0;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 12px; }
+  .nav-brand img {
+    height: 52px; width: 52px; object-fit: cover; object-position: center 24%;
+    border-radius: var(--radius-pill);
+  }
+  .nav-brand-name {
+    font-weight: 700; font-size: 26px; color: var(--color-ink); letter-spacing: -0.01em;
+  }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a {
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    color: var(--color-ink-soft);
+    border-bottom: 2.5px solid transparent;
+    padding-bottom: 3px;
+  }
+  .nav-links a.active {
+    color: var(--color-matcha-deep);
+    border-bottom-color: var(--color-matcha);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-sans); font-weight: var(--weight-sub);
+    line-height: 1; border-radius: var(--radius-pill); cursor: pointer;
+    border: 0;
+    transition: transform var(--dur-fast) var(--ease-bounce),
+                filter var(--dur-fast) var(--ease-soft),
+                box-shadow var(--dur-fast) var(--ease-soft);
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+  .btn-sm { font-size: var(--text-sm); padding: 9px 18px; }
+  .btn-lg { font-size: var(--text-lg); padding: 18px 34px; gap: 14px; }
+  .btn-primary { background: var(--brand-primary); color: var(--text-on-brand); box-shadow: var(--shadow-cta); }
+  .btn-secondary { background: var(--color-peach); color: var(--color-ink); box-shadow: 0 8px 18px rgba(242, 169, 140, 0.3); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.16); color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.4);
+  }
+  .btn-icon-circle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.28); margin-right: -8px; margin-left: 2px;
+  }
+
+  /* Hero */
+  .hero {
+    max-width: 1140px; margin: 0 auto; padding: 56px 24px 20px;
+    display: grid; grid-template-columns: 1.05fr 0.95fr;
+    gap: 40px; align-items: center;
+  }
+  .hero-eyebrow-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .hero h1 {
+    font-size: clamp(44px, 5.4vw, 68px);
+    line-height: 1.05; margin: 0 0 20px; letter-spacing: -0.02em;
+  }
+  .hero h1 .ink { color: var(--color-ink); }
+  .hero h1 .peach { color: var(--color-peach-deep); }
+  .hero h1 .matcha {
+    color: var(--color-matcha-deep);
+    border-bottom: 5px solid var(--color-matcha);
+    padding-bottom: 2px;
+  }
+  .hero p.lead { font-size: 17px; color: var(--text-body); max-width: 380px; margin: 0 0 28px; }
+  .hero p.lead em { font-style: normal; color: var(--color-matcha-deep); font-weight: 600; }
+  .hero-trust { margin-top: 34px; }
+  .hero-trust-line {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    color: var(--text-subtle); font-size: 13px;
+  }
+  .hero-trust-line .heart { color: var(--color-peach-deep); }
+  .hero-brands {
+    display: flex; gap: 28px; opacity: 0.5;
+    font-weight: 600; color: var(--color-ink); font-size: 18px;
+  }
+  .hero-mascot {
+    position: relative; display: flex; justify-content: center; align-items: center; min-height: 400px;
+  }
+  .hero-mascot-blob {
+    position: absolute; inset: 4% 6%;
+    background: var(--color-matcha-soft);
+    border-radius: 46% 54% 52% 48% / 52% 46% 54% 48%;
+  }
+  .hero-mascot .sparkle-tr { position: absolute; top: 12%; right: 14%; font-size: 26px; color: var(--color-yellow-deep); }
+  .hero-mascot .sparkle-bl { position: absolute; bottom: 16%; left: 12%; font-size: 18px; color: var(--color-matcha-deep); }
+  .hero-mascot img {
+    position: relative; width: 100%; max-width: 420px; object-fit: contain;
+  }
+
+  /* Section heading */
+  .section-heading { text-align: center; }
+  .section-heading-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .section-heading h2 { margin: 0; font-size: var(--text-h2); font-weight: var(--weight-head); color: var(--color-ink); }
+  .section-heading p { margin: 8px 0 0; font-size: var(--text-lg); color: var(--text-body); }
+
+  /* Agents (feature cards) */
+  .agents { max-width: 1140px; margin: 0 auto; padding: 60px 24px 20px; }
+  .agents-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+  .feature-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-lg);
+    padding: 36px 24px 28px;
+    transition: transform var(--dur-base) var(--ease-soft),
+                box-shadow var(--dur-base) var(--ease-soft);
+    cursor: pointer; text-align: center;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(75, 59, 49, 0.12); }
+  .feature-badge {
+    width: 68px; height: 68px; border-radius: var(--radius-pill);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px; box-shadow: var(--shadow-sm);
+  }
+  .feature-card h4 { margin: 0 0 8px; font-size: 22px; font-weight: 700; color: var(--color-ink); }
+  .feature-card p { margin: 0 0 18px; font-size: 15px; color: var(--text-body); }
+  .feature-card a { font-weight: 600; font-size: 15px; }
+
+  /* Values */
+  .values { max-width: 1140px; margin: 0 auto; padding: 30px 24px 60px; }
+  .values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .value-card {
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-5);
+    text-align: center; position: relative;
+  }
+  .value-card.matcha { background: var(--color-matcha-soft); }
+  .value-card.peach  { background: var(--color-peach-soft); }
+  .value-card.blue   { background: var(--color-blue-soft); }
+  .value-card.yellow { background: var(--color-yellow-soft); }
+  .value-icon-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
+  .value-icon {
+    width: 64px; height: 64px; border-radius: var(--radius-pill);
+    background: var(--color-white);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .value-spark { position: absolute; top: -2px; right: -10px; font-size: 16px; }
+  .value-card.matcha .value-spark { color: var(--color-matcha-deep); }
+  .value-card.peach  .value-spark { color: var(--color-peach-deep); }
+  .value-card.blue   .value-spark { color: var(--color-blue-deep); }
+  .value-card.yellow .value-spark { color: var(--color-yellow-deep); }
+  .value-card h4 {
+    margin: 0 0 6px; font-size: var(--text-h4);
+    font-weight: var(--weight-head); color: var(--color-ink);
+  }
+  .value-card p { margin: 0; font-size: var(--text-sm); color: var(--text-body); line-height: var(--leading-snug); }
+
+  /* Footer */
+  .footer { max-width: 1140px; margin: 0 auto 40px; padding: 0 24px; }
+  .footer-cta {
+    background: var(--color-matcha); border-radius: var(--radius-xl);
+    padding: 52px 48px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .footer-cta .spark-tl { position: absolute; top: 24px; left: 40px; font-size: 22px; color: rgba(255,255,255,0.5); }
+  .footer-cta .spark-br { position: absolute; bottom: 28px; right: 56px; font-size: 16px; color: rgba(255,255,255,0.5); }
+  .footer-cta h2 { color: #fff; font-size: 38px; margin: 0 0 10px; }
+  .footer-cta p  { color: rgba(255,255,255,0.92); font-size: 17px; margin: 0 0 26px; }
+  .footer-cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .footer-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 26px 8px 0; color: var(--text-subtle); font-size: 14px;
+  }
+  .footer-brand { display: flex; align-items: center; gap: 10px; }
+  .footer-brand img {
+    height: 40px; width: 40px; object-fit: cover; object-position: center 24%;
+    border-radius: var(--radius-pill);
+  }
+  .footer-brand span {
+    font-weight: 700; color: var(--color-ink); font-size: 18px;
+  }
+
+  /* Responsive */
+  @media (max-width: 920px) {
+    .nav { flex-wrap: wrap; gap: 12px; }
+    .nav-links { order: 3; width: 100%; justify-content: center; gap: 18px; flex-wrap: wrap; }
+    .hero { grid-template-columns: 1fr; }
+    .agents-grid { grid-template-columns: 1fr; }
+    .values-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-bar { flex-direction: column; gap: 12px; text-align: center; }
+  }
+  @media (max-width: 520px) {
+    .values-grid { grid-template-columns: 1fr; }
+    .footer-cta { padding: 40px 24px; }
+    .footer-cta h2 { font-size: 30px; }
+  }
+</style>
 </head>
 <body>
-<h1>moo</h1>
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-brand">
+      <img src="logo.png" alt="Moomacha">
+      <span class="nav-brand-name">Moomacha</span>
+    </div>
+    <div class="nav-links" id="nav-links">
+      <a href="#home" class="active" data-nav>Home</a>
+      <a href="#about" data-nav>About Us</a>
+      <a href="#services" data-nav>Services</a>
+      <a href="#work" data-nav>Our Work</a>
+      <a href="#journal" data-nav>Moo Journal</a>
+    </div>
+    <button class="btn btn-primary btn-sm" type="button">
+      Let's Talk
+      <span aria-hidden="true" style="font-size:14px">🐮</span>
+    </button>
+  </nav>
+
+  <section class="hero" id="home">
+    <div>
+      <div class="hero-eyebrow-row">
+        <svg width="26" height="18" viewBox="0 0 34 22" fill="none" aria-hidden="true">
+          <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
+        </svg>
+        <span class="moo-eyebrow">A Matcha-Fueled Marketing Agency</span>
+        <svg width="26" height="18" viewBox="0 0 34 22" fill="none" style="transform: scaleX(-1)" aria-hidden="true">
+          <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
+        </svg>
+      </div>
+      <h1>
+        <span class="ink">Creative Ideas.</span><br>
+        <span class="peach">Happy Clients.</span><br>
+        <span class="matcha">Mooore Impact.</span>
+      </h1>
+      <p class="lead">
+        We're a playful team of cow agents crafting brands, campaigns, and content that make people say <em>"udderly amazing!"</em>
+      </p>
+      <button class="btn btn-primary btn-lg" type="button">
+        Hire the Herd
+        <span class="btn-icon-circle" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </button>
+      <div class="hero-trust">
+        <div class="hero-trust-line">
+          <span class="heart" aria-hidden="true">♥</span>
+          Trusted by awesome brands
+          <span class="heart" aria-hidden="true">♥</span>
+        </div>
+        <div class="hero-brands">
+          <span>moogurt</span><span>leafy.</span><span>bloom</span><span>cupful</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-mascot" aria-hidden="true">
+      <div class="hero-mascot-blob"></div>
+      <span class="sparkle-tr">✦</span>
+      <span class="sparkle-bl">✦</span>
+      <img src="logo.png" alt="Moomacha mascot">
+    </div>
+  </section>
+
+  <section class="agents" id="services">
+    <div class="section-heading">
+      <div class="section-heading-row">
+        <svg width="34" height="22" viewBox="0 0 34 22" fill="none" aria-hidden="true">
+          <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
+          <path d="M22 7c-3-1-4-4-4-4s3-1 5 0 3 4 3 4-1 1-4 0Z" fill="var(--color-matcha)"/>
+        </svg>
+        <h2>Meet the Agents</h2>
+        <svg width="34" height="22" viewBox="0 0 34 22" fill="none" style="transform: scaleX(-1)" aria-hidden="true">
+          <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
+          <path d="M22 7c-3-1-4-4-4-4s3-1 5 0 3 4 3 4-1 1-4 0Z" fill="var(--color-matcha)"/>
+        </svg>
+      </div>
+      <p>Different skills. One herd. Big results.</p>
+    </div>
+    <div class="agents-grid">
+      <article class="feature-card">
+        <div class="feature-badge" style="background: var(--color-peach-deep);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.06 11.9 2.6 18.4a2 2 0 1 0 3 3l6.5-6.46"/>
+            <path d="M14 6.5 18 3l3 3-3.5 4M14 6.5 17.5 10M14 6.5l3.5 3.5"/>
+          </svg>
+        </div>
+        <h4>Design</h4>
+        <p>We create scroll-stopping visuals that tell your story beautifully.</p>
+        <a href="#" style="color: var(--color-peach-deep);">View Work →</a>
+      </article>
+      <article class="feature-card">
+        <div class="feature-badge" style="background: var(--color-blue);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m9 16-4-4 4-4M15 8l4 4-4 4"/>
+          </svg>
+        </div>
+        <h4>Developer</h4>
+        <p>We build fast, responsive websites that work like a charm.</p>
+        <a href="#" style="color: var(--color-blue-deep);">See Projects →</a>
+      </article>
+      <article class="feature-card">
+        <div class="feature-badge" style="background: var(--color-yellow-deep);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m3 11 14-7v16L3 13v-2Z"/>
+            <path d="M7 12v6M17 9a3 3 0 0 1 0 6"/>
+          </svg>
+        </div>
+        <h4>Strategy</h4>
+        <p>We plan smart campaigns that grow your brand and audience.</p>
+        <a href="#" style="color: var(--color-yellow-deep);">Learn More →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="values" id="about">
+    <div class="values-grid">
+      <div class="value-card matcha">
+        <div class="value-icon-wrap">
+          <div class="value-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-matcha-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 9-9 1 0 2 .2 2 .2S15 9 11 13s-7 7-7 7"/>
+              <path d="M11 20c0-4 2-7 5-9"/>
+            </svg>
+          </div>
+          <span class="value-spark" aria-hidden="true">✦</span>
+        </div>
+        <h4>Kindness</h4>
+        <p>We care for our clients, our community, and our planet.</p>
+      </div>
+      <div class="value-card peach">
+        <div class="value-icon-wrap">
+          <div class="value-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="var(--color-peach-deep)" aria-hidden="true">
+              <path d="M12 21s-7-4.5-9.5-8.5C.5 9 2.5 5 6 5c2 0 3.2 1.3 4 2.4C10.8 6.3 12 5 14 5c3.5 0 5.5 4 3.5 7.5C19 16.5 12 21 12 21Z"/>
+            </svg>
+          </div>
+          <span class="value-spark" aria-hidden="true">✦</span>
+        </div>
+        <h4>Focus</h4>
+        <p>We stay present and get things done with heart and hustle.</p>
+      </div>
+      <div class="value-card blue">
+        <div class="value-icon-wrap">
+          <div class="value-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-blue-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="8" r="3"/>
+              <circle cx="17" cy="9" r="2.4"/>
+              <path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M16 20c0-2.4.6-4 4-4"/>
+            </svg>
+          </div>
+          <span class="value-spark" aria-hidden="true">✦</span>
+        </div>
+        <h4>Teamwork</h4>
+        <p>We mooove together, support each other, and win together.</p>
+      </div>
+      <div class="value-card yellow">
+        <div class="value-icon-wrap">
+          <div class="value-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--color-yellow-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 10h12v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-5Z"/>
+              <path d="M17 11h2.5a2.5 2.5 0 0 1 0 5H17M9 3v2M13 3v2"/>
+            </svg>
+          </div>
+          <span class="value-spark" aria-hidden="true">✦</span>
+        </div>
+        <h4>Energy</h4>
+        <p>Good matcha. Good vibes. Great ideas.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" id="journal">
+    <div class="footer-cta">
+      <span class="spark-tl" aria-hidden="true">✦</span>
+      <span class="spark-br" aria-hidden="true">✦</span>
+      <h2>Let's grow together,<br>work better.</h2>
+      <p>Ready to make something udderly amazing? The herd is standing by.</p>
+      <div class="footer-cta-actions">
+        <button class="btn btn-secondary btn-lg" type="button">
+          Hire the Herd
+          <span class="btn-icon-circle" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </button>
+        <button class="btn btn-ghost btn-lg" type="button">Read the Moo Journal</button>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="logo.png" alt="">
+        <span>Moomacha</span>
+      </div>
+      <span>© 2026 Moomacha · Grow Together, Work Better 🐮</span>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('[data-nav]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        document.querySelectorAll('[data-nav]').forEach(function (x) { x.classList.remove('active'); });
+        a.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>
