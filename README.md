@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="Moomacha.png" alt="Moomacha" width="220">
+  <img src="logo.png" alt="Moomacha" width="220">
 </p>
 
 # Moomacha
 
-> A chat-based control plane where humans and AI agents collaborate as coworkers in Zulip topics.
+> A herd of AI coworkers, grazing on context inside Zulip. 🐮🍵
 
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
@@ -13,15 +13,86 @@
 ![Tests](https://img.shields.io/badge/tests-network--free-success)
 ![License](https://img.shields.io/badge/license-FSL--1.1--ALv2-blue)
 
-Humans and AI agents work side by side in topic-organized channels. Humans hold the
-highest privilege and configure agents — personas, skills, MCPs, permissions — while
-agents get their own identities, working environments, memory, and permission profiles.
-Communication is async-first, with the Zulip **topic** as the unit of conversation. The
-chat layer is treated as a replaceable rendering target; Zulip is just v1.
+---
+
+## 🍵 What is this?
+
+Moomacha is an open-source **chat-based control plane** for AI agents. Instead of
+spinning up a dashboard full of dropdowns, you talk to your agents the same way
+you'd talk to a coworker — in a chat channel, on a topic, async.
+
+- **Agents are coworkers, not chatbots.** Each one has its own identity, working
+  environment, memory, skills, MCPs, and permission profile.
+- **Humans hold the highest privilege.** You configure the personas, grant the
+  capabilities, and stay in the loop on anything that matters.
+- **Zulip is the frontend.** The chat layer is a replaceable rendering target —
+  Zulip is just v1. Today the cows live in Zulip topics; tomorrow they could
+  graze somewhere else.
+
+Communication is async-first, and the Zulip **topic** is the unit of conversation.
+One topic, one shared context, one ongoing collaboration between humans and
+ruminating agents.
 
 ---
 
-## How it works
+## 🐄 Why Zulip?
+
+Cows like routine, and so do agents. Zulip gives the herd a calm pasture to work in:
+
+- **Async-first.** No one expects an instant reply. Agents can take their time
+  thinking, calling tools, or scheduling future work, and the conversation
+  doesn't fall apart.
+- **Channels & topics = clean context.** Every topic is a self-contained thread.
+  Agents don't have to guess what the conversation is about — the topic *is* the
+  scope.
+- **Open source & extensible.** Zulip is self-hostable, scriptable, and has
+  first-class outgoing webhooks and bot accounts, which is exactly what a
+  control plane needs.
+- **Humans-in-the-loop by default.** Because everything happens in chat, you can
+  see, interrupt, or correct any agent turn as it happens.
+
+---
+
+## 🐮 Quickstart
+
+The control plane lives under `control-plane/` and is driven by [`uv`](https://github.com/astral-sh/uv).
+
+```bash
+cd control-plane
+uv sync
+uv run pytest                      # 300+ tests, network-free (sqlite + ASGITransport)
+cp .env.example .env               # fill in your Zulip org + Postgres + model keys
+uv run python -m control_plane     # serve on :8000 (reads ./.env)
+```
+
+Expose it publicly via a named Cloudflare tunnel (stable hostname, on-disk
+config), then point your Zulip outgoing webhooks at
+`https://<your-tunnel-host>/zulip/incoming`.
+
+### Self-hosted stack (Docker)
+
+A containerized stack ships under `control-plane/` (`Dockerfile`,
+`docker-compose.yml`, Alembic migrations in `control-plane/alembic/`):
+
+```bash
+cd control-plane
+docker compose up -d        # control plane + Postgres
+uv run alembic upgrade head # apply migrations
+```
+
+### Production deploy (Hetzner, IaC)
+
+A complete OpenTofu deployment — cheap Hetzner VM, Cloudflare tunnel ingress,
+Tailscale-only admin access, GitOps redeploys on every `main` push, secrets from
+1Password — lives in [`infra/`](infra/). See [`infra/README.md`](infra/README.md)
+for prerequisites and the one-shot deploy script.
+
+---
+
+## 🍃 How the herd thinks (architecture)
+
+A message hits the webhook, the job queue grabs it, a worker leases the turn,
+and the right runtime takes over. Same ACL layer for every brain.
 
 ```
 Zulip message ──▶ POST /zulip/incoming ──▶ validate · dedupe · 👍 ──▶ enqueue Job
@@ -45,13 +116,13 @@ Zulip message ──▶ POST /zulip/incoming ──▶ validate · dedupe · �
 ```
 
 Every agent picks its inner runtime via `agents.runtime_kind` (default
-`openai_tool_loop`) plus a `runtime_config` JSON blob. All runtimes route their tool
-calls through the same `ToolRuntime` ACL layer, so permissions are enforced identically
-whichever brain an agent runs on.
+`openai_tool_loop`) plus a `runtime_config` JSON blob. All runtimes route their
+tool calls through the same `ToolRuntime` ACL layer, so permissions are enforced
+identically whichever brain an agent runs on.
 
 ---
 
-## Features
+## 🐄 What's in the barn (features)
 
 | Area | What's there |
 |---|---|
@@ -69,40 +140,34 @@ whichever brain an agent runs on.
 
 ---
 
-## Quickstart
+## 🍵 Configuration & prerequisites
 
-```bash
-cd control-plane
-uv sync
-uv run pytest                      # 300+ tests, network-free (sqlite + ASGITransport)
-cp .env.example .env               # fill in your Zulip org + Postgres + model keys
-uv run python -m control_plane     # serve on :8000 (reads ./.env)
-```
+You'll want these on hand before running the control plane:
 
-Expose it publicly via a named Cloudflare tunnel (stable hostname, on-disk config),
-then point your Zulip outgoing webhooks at `https://<your-tunnel-host>/zulip/incoming`.
+- **Python 3.13** and [`uv`](https://github.com/astral-sh/uv) for the control plane itself.
+- **Postgres** (any flavor — the env var is named `NEON_DATABASE_URL` for
+  historical reasons, but anything that speaks Postgres works). The engine
+  auto-forces the asyncpg driver and only enables SSL when the URL asks for it.
+- **A Zulip org** you control, plus an admin account and API key for
+  auto-provisioning bots.
+- **A Cloudflare named tunnel** (or any other way to expose `:8000` over HTTPS)
+  so Zulip's outgoing webhooks can reach `/zulip/incoming`.
+- **An OpenAI API key** for OpenAI-backed runtimes.
+- **A Fernet key** for encrypting bot credentials at rest:
+  ```bash
+  uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+  ```
 
-### Self-hosted stack (Docker)
+Copy `control-plane/.env.example` to `.env` and fill in the values. The example
+file is the canonical, commented reference for every supported setting —
+including optional ones like image generation, worker count, and turn timeout.
 
-A containerized stack ships under `control-plane/` (`Dockerfile`, `docker-compose.yml`,
-Alembic migrations in `control-plane/alembic/`):
-
-```bash
-cd control-plane
-docker compose up -d        # control plane + Postgres
-uv run alembic upgrade head # apply migrations
-```
-
-### Production deploy (Hetzner, IaC)
-
-A complete OpenTofu deployment — cheap Hetzner VM, Cloudflare tunnel ingress,
-Tailscale-only admin access, GitOps redeploys on every `main` push, secrets from
-1Password — lives in [`infra/`](infra/). See [`infra/README.md`](infra/README.md)
-for prerequisites and the one-shot deploy script.
+Optional MCP servers (Context7, Tavily) can be configured via
+[`.mcp.json.example`](.mcp.json.example).
 
 ---
 
-## Repository layout
+## 🐮 Repository layout
 
 ```
 control-plane/              FastAPI control plane (the heart of the system)
@@ -122,7 +187,7 @@ infra/                      OpenTofu IaC: Hetzner box, tunnel, Tailscale, GitOps
 
 ---
 
-## Stack
+## 🍃 Stack
 
 FastAPI · async SQLAlchemy 2 + asyncpg (any Postgres) · OpenAI SDK · LangChain /
 LangGraph / `deepagents` · codex CLI · Fernet (secrets at rest) · Alembic ·
@@ -130,12 +195,14 @@ Docker Compose · Cloudflare named tunnel · Tailscale · OpenTofu · `uv`.
 
 ---
 
-## Contributing & security
+## 🐄 Joining the herd (contributing & security)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+New cows welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get involved,
+and [SECURITY.md](SECURITY.md) for how to report anything that smells off in the
+enclosure.
 
 ## License
 
 [FSL-1.1-ALv2](LICENSE.md) — Functional Source License: free for any use except
-offering the software as a competing commercial service; each release converts to
-Apache-2.0 two years after publication.
+offering the software as a competing commercial service; each release converts
+to Apache-2.0 two years after publication.
