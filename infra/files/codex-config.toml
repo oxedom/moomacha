@@ -1,0 +1,8 @@
+# Codex (@openai/codex) defaults for the agent-control-pane box. NON-SECRET.
+# Auth lives in ~/.codex/auth.json (ChatGPT mode), delivered out-of-band from
+# 1Password by push-secrets.sh / bootstrap.sh — never here, never in git.
+#
+# Trust the app checkout so codex runs without an interactive trust prompt when
+# launched non-interactively (exec-mcp) or over SSH inside the repo.
+[projects."/opt/agent-control-pane"]
+trust_level = "trusted"

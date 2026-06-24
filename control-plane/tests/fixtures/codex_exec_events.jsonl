@@ -1,0 +1,7 @@
+{"type": "thread.started", "thread_id": "th_probe"}
+{"type": "turn.started"}
+{"type": "item.completed", "item": {"id": "item_0", "type": "agent_message", "text": "I will create probe.txt with the requested content."}}
+{"type": "item.started", "item": {"id": "item_1", "type": "file_change", "changes": [{"path": "/ws/probe.txt", "kind": "add"}], "status": "in_progress"}}
+{"type": "item.completed", "item": {"id": "item_1", "type": "file_change", "changes": [{"path": "/ws/probe.txt", "kind": "add"}], "status": "completed"}}
+{"type": "item.completed", "item": {"id": "item_2", "type": "agent_message", "text": "PONG"}}
+{"type": "turn.completed", "usage": {"input_tokens": 100, "output_tokens": 5}}

@@ -1,0 +1,11 @@
+node_modules
+dist
+store
+.env
+accounts.json
+*.log
+.pairpid
+.runpid
+npm-install.log
+test
+vitest.config.ts

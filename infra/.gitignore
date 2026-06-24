@@ -1,0 +1,11 @@
+# OpenTofu / Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+# Local var/secret overrides
+*.auto.tfvars
+terraform.tfvars
+# Anything rendered from 1Password at deploy time
+/rendered/

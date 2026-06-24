@@ -1,0 +1,19 @@
+# Secrets — never bake into the image; provide at runtime via compose env_file.
+.env
+.env.*
+!.env.example
+
+# Virtualenvs / caches
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.mypy_cache
+
+# Local DBs / build noise
+*.sqlite
+alembic_autogen.sqlite
+artifacts
+.git
+.gitignore

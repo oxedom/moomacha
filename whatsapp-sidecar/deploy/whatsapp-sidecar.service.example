@@ -1,0 +1,28 @@
+# Example systemd unit for the WhatsApp sidecar on the Hetzner box.
+# Copy to /etc/systemd/system/whatsapp-sidecar.service, fill in paths/secrets,
+# then: systemctl daemon-reload && systemctl enable --now whatsapp-sidecar
+[Unit]
+Description=WhatsApp read-only sidecar (Baileys message stream)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/whatsapp-sidecar
+# Build once (npm ci && npm run build) and run the compiled output.
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=5
+# Loopback-only; the control-plane reaches it over 127.0.0.1.
+Environment=WHATSAPP_SIDECAR_HOST=127.0.0.1
+Environment=WHATSAPP_SIDECAR_PORT=8765
+# Durable session store (survives the otherwise-cattle box). Keep it backed up.
+Environment=WHATSAPP_SIDECAR_STORE=/var/lib/whatsapp-sidecar/store
+Environment=WHATSAPP_SIDECAR_ACCOUNTS=/var/lib/whatsapp-sidecar/accounts.json
+# Secret — source from the box .env / 1Password, do not inline in the unit.
+EnvironmentFile=/etc/whatsapp-sidecar.env
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

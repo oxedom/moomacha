@@ -1,0 +1,128 @@
+#cloud-config
+# agent-control-pane box bootstrap. SECRET-FREE except the ephemeral, single-use
+# Tailscale auth key interpolated below. Everything else (.env, tunnel creds,
+# gh/claude tokens) is delivered out-of-band by scripts/bootstrap.sh.
+package_update: true
+package_upgrade: false
+packages:
+  - ca-certificates
+  - curl
+  - git
+  - jq
+  - rsync
+  - build-essential
+  - tmux
+
+write_files:
+  - path: /etc/systemd/system/exec-mcp.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=exec-mcp (scoped run_command + coding-agent MCP)
+      After=network-online.target
+      Wants=network-online.target
+      [Service]
+      Type=simple
+      User=${acp_user}
+      Group=${acp_user}
+      WorkingDirectory=/opt/agent-control-pane/exec-mcp
+      EnvironmentFile=/etc/exec-mcp/exec-mcp.env
+      Environment=PATH=/usr/local/bin:/usr/bin:/bin
+      Environment=HOME=/home/${acp_user}
+      ExecStart=/usr/local/bin/uv run python -m exec_mcp.server
+      Restart=always
+      RestartSec=3
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/cloudflared.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=cloudflared named tunnel (control-plane ingress)
+      After=network-online.target
+      Wants=network-online.target
+      [Service]
+      Type=simple
+      ExecStart=/usr/bin/cloudflared --no-autoupdate --config /etc/cloudflared/config.yml tunnel run
+      Restart=always
+      RestartSec=5
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/control-plane-gitops.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=control-plane GitOps reconcile (pull + rebuild on change)
+      After=docker.service network-online.target
+      Wants=network-online.target
+      [Service]
+      Type=oneshot
+      User=${acp_user}
+      Group=${acp_user}
+      Environment=HOME=/home/${acp_user}
+      Environment=PATH=/usr/local/bin:/usr/bin:/bin
+      ExecStart=/opt/agent-control-pane/control-plane/scripts/box-redeploy.sh
+
+  - path: /etc/systemd/system/control-plane-gitops.timer
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Run control-plane GitOps reconcile periodically
+      [Timer]
+      OnBootSec=2min
+      OnUnitActiveSec=3min
+      Persistent=true
+      [Install]
+      WantedBy=timers.target
+
+  - path: /usr/local/bin/cc
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      # Coding-agent wrapper. exec-mcp scrubs the env and uses `bash -c`, so launched
+      # agents cannot inherit CLAUDE_CODE_OAUTH_TOKEN. HOME *is* passed through, so we
+      # read the token from a 0600 file under HOME and inject it inline for this call.
+      exec env CLAUDE_CODE_OAUTH_TOKEN="$(cat /home/${acp_user}/.config/claude-code-token)" claude "$@"
+
+runcmd:
+  # --- swap (2GB) so 4GB box can build images without OOM ---
+  - fallocate -l 2G /swapfile
+  - chmod 600 /swapfile
+  - mkswap /swapfile
+  - swapon /swapfile
+  - sh -c 'echo "/swapfile none swap sw 0 0" >> /etc/fstab'
+  - sysctl -w vm.swappiness=60
+  # --- non-root service user + dirs ---
+  - useradd --create-home --shell /bin/bash ${acp_user}
+  - install -d -o ${acp_user} -g ${acp_user} /opt/agent-control-pane
+  - install -d -m 0755 /etc/cloudflared /etc/exec-mcp
+  # --- Docker + compose plugin ---
+  - sh -c 'curl -fsSL https://get.docker.com | sh'
+  - usermod -aG docker ${acp_user}
+  - systemctl enable --now docker
+  # --- Node 22 + coding agents (Claude Code + Codex) ---
+  - sh -c 'curl -fsSL https://deb.nodesource.com/setup_22.x | bash -'
+  - apt-get install -y nodejs
+  - npm install -g @anthropic-ai/claude-code
+  # Codex needs no `cc`-style wrapper: it reads ~/.codex/auth.json (ChatGPT mode)
+  # from HOME, which exec-mcp passes through even though it scrubs env vars.
+  - npm install -g @openai/codex
+  # --- uv (system-wide) ---
+  - sh -c 'curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh'
+  # --- GitHub CLI ---
+  - sh -c 'curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg'
+  - chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+  - sh -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list'
+  - apt-get update
+  - apt-get install -y gh
+  # --- cloudflared ---
+  - sh -c 'curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null'
+  - sh -c 'echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" > /etc/apt/sources.list.d/cloudflared.list'
+  - apt-get update
+  - apt-get install -y cloudflared
+  # --- Tailscale: join the tailnet, enable Tailscale SSH (the backdoor) ---
+  - sh -c 'curl -fsSL https://tailscale.com/install.sh | sh'
+  - tailscale up --auth-key=${tailscale_auth_key} --ssh --hostname=${tailscale_hostname} --advertise-tags=${tailscale_tags} --accept-dns=true
+  - systemctl daemon-reload

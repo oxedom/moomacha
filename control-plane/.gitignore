@@ -1,0 +1,7 @@
+tools.jsonl
+.env
+.env.*
+!.env.example
+!.env.dev.example
+backups/
+var/

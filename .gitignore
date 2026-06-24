@@ -1,0 +1,22 @@
+.env
+.venv/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+artifacts/
+e2e-after-send.yaml
+e2e-result.png
+.playwright-cli/
+.temp
+temp/*
+# cloudflared secrets — never commit (the tunnel config.yml itself is safe)
+cert.pem
+
+# Claude Code local state / worktrees (never commit)
+.claude/
+
+# Local Google OAuth creds for the Calendar/Tasks tools (never commit secrets)
+var/google-creds/
+
+# Local MCP config holds a real Tavily key — commit only the .example
+.mcp.json

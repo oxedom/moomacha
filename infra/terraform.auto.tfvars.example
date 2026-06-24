@@ -1,0 +1,10 @@
+# Copy to terraform.auto.tfvars and adjust. Secrets (hcloud_token,
+# tailscale_auth_key) are NOT set here — scripts/deploy.sh exports them from
+# 1Password as TF_VAR_* at apply time. Do not commit terraform.auto.tfvars.
+
+# location          = "nbg1"
+# server_type       = "cx23"
+# tailscale_hostname = "agent-control-pane"
+# tailscale_tags    = "tag:agent-server"
+# acp_user          = "acp"
+# admin_ip_cidr     = ""   # optional: your IP for an emergency public-SSH rule

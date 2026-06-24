@@ -1,0 +1,46 @@
+# Box deployment of the control-plane: app only (Postgres is external Neon),
+# host networking so the app reaches the host exec-mcp at 127.0.0.1:9100 and so
+# the host cloudflared can forward to localhost:8000. Built + (re)started by
+# scripts/box-redeploy.sh on each newly pushed commit. alembic runs on boot via
+# the image entrypoint.
+services:
+  app:
+    build:
+      context: .
+      args:
+        # box-redeploy.sh exports GIT_SHA=<pulled HEAD> before `up --build` so the
+        # image bakes the commit it was built from (surfaced at GET /version).
+        GIT_SHA: ${GIT_SHA:-unknown}
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env
+    environment:
+      PORT: "8000"
+    # Codex per-topic workspaces are INTENTIONALLY ephemeral: no volume/bind-mount.
+    # The box is cattle (rebuilt on every push), so durable output must go to
+    # GitHub (code) or bucket storage (artifacts), not the container filesystem.
+    # CODEX_WORKSPACE_ROOT therefore stays container-local and is wiped on redeploy.
+
+  # Read-only WhatsApp message-stream sidecar (Baileys). Deployed via the same
+  # GitOps `docker compose up -d --build`. Host networking so the app (also host
+  # net) reaches it at 127.0.0.1:8765. UNLIKE the app, its WhatsApp session and
+  # accounts config are durable host state (a linked-device pairing must survive
+  # rebuilds), so they are bind-mounted from /var/lib/whatsapp-sidecar — NOT baked
+  # into the cattle image. The bearer token lives in /etc/whatsapp-sidecar.env
+  # (host-only, kept out of the repo and out of the app's .env).
+  whatsapp-sidecar:
+    build:
+      context: ../whatsapp-sidecar
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - /etc/whatsapp-sidecar.env
+    environment:
+      WHATSAPP_SIDECAR_HOST: "127.0.0.1"
+      WHATSAPP_SIDECAR_PORT: "8765"
+      WHATSAPP_SIDECAR_STORE: /app/store
+      WHATSAPP_SIDECAR_ACCOUNTS: /app/accounts.json
+    volumes:
+      - /var/lib/whatsapp-sidecar/store:/app/store
+      - /var/lib/whatsapp-sidecar/accounts.json:/app/accounts.json:ro

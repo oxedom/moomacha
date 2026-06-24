@@ -1,0 +1,107 @@
+# Self-host stack for the control-plane.
+#
+#   docker compose up -d --build            # app + bundled Postgres
+#   docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+#                                             # local dev using .env.dev
+#   docker compose --profile tunnel up -d   # also run the Cloudflare tunnel
+#
+# All app secrets come from ${CONTROL_PLANE_ENV_FILE:-.env}. For local dev,
+# use `.env.dev` via `--env-file .env.dev` so the prod/cloud `.env` is not
+# loaded into the container. The app port is published on the host so you can put
+# ANY ingress in front of it (Caddy/nginx/Traefik, or the optional cloudflared
+# service below).
+#
+# Migrations run automatically: the app entrypoint executes `alembic upgrade head`
+# on boot, so a fresh database is created and migrated with no manual step.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: control_plane
+      POSTGRES_PASSWORD: control_plane
+      POSTGRES_DB: control_plane
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U control_plane -d control_plane"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # Not published to the host by default; only the app reaches it on the
+    # compose network. Uncomment to inspect the DB from your machine:
+    # ports:
+    #   - "5432:5432"
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - ${CONTROL_PLANE_ENV_FILE:-.env}
+    environment:
+      # Default to the bundled Postgres above. Set NEON_DATABASE_URL in .env (or
+      # your shell) to use an external Postgres/Neon instead — that value wins.
+      NEON_DATABASE_URL: ${NEON_DATABASE_URL:-postgresql+asyncpg://control_plane:control_plane@db:5432/control_plane}
+    ports:
+      - "${PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Optional local Redis Agent Memory stack. Enable with `--profile memory`.
+  # The app can use it when .env.dev sets:
+  #   AGENT_MEMORY_ENABLED=true
+  #   AGENT_MEMORY_ENDPOINT=http://agent-memory:8000
+  #   AGENT_MEMORY_STORE_ID=
+  #   AGENT_MEMORY_API_KEY=
+  memory-redis:
+    image: redis/redis-stack:latest
+    restart: unless-stopped
+    profiles: ["memory"]
+    volumes:
+      - memorydata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  agent-memory:
+    image: redislabs/agent-memory-server:latest
+    restart: unless-stopped
+    profiles: ["memory"]
+    command: agent-memory api --host 0.0.0.0 --port 8000 --task-backend=asyncio
+    env_file:
+      - ${CONTROL_PLANE_ENV_FILE:-.env}
+    environment:
+      REDIS_URL: redis://memory-redis:6379
+      OPENAI_API_KEY: ${OPENAI_KEY:-}
+      AUTH_MODE: disabled
+      DISABLE_AUTH: "true"
+      LONG_TERM_MEMORY: "true"
+      ENABLE_DISCRETE_MEMORY_EXTRACTION: "false"
+      ENABLE_TOPIC_EXTRACTION: "false"
+      ENABLE_NER: "false"
+    ports:
+      - "127.0.0.1:${AGENT_MEMORY_PORT:-18000}:8000"
+    depends_on:
+      memory-redis:
+        condition: service_healthy
+
+  # Optional: Cloudflare named tunnel. Enable with `--profile tunnel`.
+  # Create a tunnel in the Cloudflare dashboard, set its public hostname to route
+  # to http://app:8000, and put the tunnel token in .env as CLOUDFLARE_TUNNEL_TOKEN.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    profiles: ["tunnel"]
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      - app
+
+volumes:
+  pgdata:
+  memorydata:

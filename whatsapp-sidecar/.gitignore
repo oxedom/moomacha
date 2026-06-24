@@ -1,0 +1,12 @@
+node_modules/
+dist/
+# Per-account Baileys auth/session state — secrets, never commit.
+store/
+auth/
+*.log
+accounts.json
+.env
+# local scratch (process ids, run logs)
+.pairpid
+.runpid
+*.pid
