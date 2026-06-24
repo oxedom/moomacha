@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Moomacha" width="220">
+  <img src="logo.png" alt="Moomacha" width="640">
 </p>
 
 # Moomacha
