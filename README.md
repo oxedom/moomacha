@@ -1,4 +1,8 @@
-# Agent Control Plane
+<p align="center">
+  <img src="Moomacha.png" alt="Moomacha" width="220">
+</p>
+
+# Moomacha
 
 > A chat-based control plane where humans and AI agents collaborate as coworkers in Zulip topics.
 
