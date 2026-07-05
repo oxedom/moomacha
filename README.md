@@ -4,7 +4,7 @@
 
 # Moomacha
 
-> A herd of AI coworkers, grazing on context inside Zulip. 🐮🍵
+> An agent orchestration chat control plane.
 
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688)
@@ -15,47 +15,47 @@
 
 ---
 
-## 🍵 What this is
+## What this is
 
 Moomacha is an open-source **chat-based control plane** for AI agents. Instead
-of building a dashboard with dropdowns to configure your agents, you talk to
-them in a chat channel. The chat *is* the control surface.
+of a dashboard with dropdowns, you configure agents by talking to them in a
+Zulip channel. The chat *is* the control surface.
 
 ---
 
-## 🐄 The philosophy (or: why a herd?)
+## Design principles
 
-Three ideas sit at the bottom of this project:
+Three ideas sit under the project:
 
 **Conversation is the configuration.** Most agent frameworks ship with a UI —
 a dashboard, a graph editor, a YAML file. Moomacha doesn't. You spawn agents by
-talking to the Bastion (a privileged in-chat meta-agent). You grant capabilities
-the same way. The chat transcript *is* the audit log. There is no second pane
-of glass to keep in sync.
+talking to the Bastion (a privileged in-chat meta-agent). You grant
+capabilities the same way. The chat transcript *is* the audit log — no second
+pane of glass to keep in sync.
 
-**The topic is the IDE.** In Zulip, every conversation is scoped to a *topic*.
-Moomacha makes the topic the unit of work: one topic gets one assembled
-context, one shared memory namespace, and one ongoing collaboration between
-humans and however many agents you've invited. No topic, no context. Scope is
-structural, not configured.
+**The topic is the unit of work.** In Zulip, every conversation is scoped to a
+*topic*. Moomacha makes the topic the unit of context: one topic gets one
+assembled context, one shared memory namespace, and one ongoing collaboration
+between humans and however many agents you've invited. Scope is structural,
+not configured.
 
-**Coworkers, not chatbots.** A chatbot is a function. A coworker has an
-identity, a working environment, things they remember, things they're allowed
-to touch, and a calendar. Each Moomacha agent gets all of these — its own
-Zulip bot account, persona, memory namespace, tool ACL, schedule, and (for the
-Codex runtime) a per-topic git workspace.
+**Coworkers, not chatbots.** A chatbot is a function call. A coworker has an
+identity, a working environment, things it remembers, things it's allowed to
+touch, and a calendar. Each Moomacha agent gets all of these — its own Zulip
+bot account, persona, memory namespace, tool ACL, schedule, and (on the Codex
+runtime) a per-topic git workspace.
 
-A few more things fall out of those:
+A few consequences follow from that:
 
 - **Async is the default, not a feature.** Agents can take a minute, schedule
   something for tomorrow, or come back next week. Chat is the one substrate
-  where that's normal — not awkward.
+  where that's normal, not awkward.
 - **Privilege is a property of the agent, not the user.** Capabilities live on
   the agent record (`is_bastion`, `can_exec`, `is_librarian`). Even an admin
   can't make an agent do more than its flags allow. The ACL is enforced at one
   chokepoint — `ToolRuntime.execute` — for every runtime.
 - **Containment is structural.** A librarian gate guards shared-memory writes.
-  A tripwire shuts down sandbox agents that acquire tools beyond their
+  A tripwire can shut down a sandboxed agent that acquires tools beyond its
   baseline. The Bastion can't be invoked *by* other agents, only by humans.
 - **Humans hold the highest privilege.** You configure the personas, grant the
   capabilities, and stay in the loop on anything that matters. The chat
@@ -63,11 +63,10 @@ A few more things fall out of those:
 
 ---
 
-## 🍃 Why Zulip?
+## Why Zulip?
 
-Zulip is v1 — the chat layer is a *rendering target*. Today the cows live in
-Zulip topics; tomorrow they could graze somewhere else. But Zulip earns its
-place:
+Zulip is v1 — the chat layer is a rendering target, not a load-bearing
+dependency. But it earns its place today:
 
 - **Topics are first-class.** Slack threads are temporal; Zulip topics are
   persistent sub-channels. Context isolation falls out of the data model
@@ -76,11 +75,11 @@ place:
   token (Fernet-encrypted at rest), HMAC-validated on the way in. Slack/Discord
   webhooks are org-level — much coarser.
 - **Self-hostable and async-cultural.** No instant-reply pressure. Agents can
-  think.
+  take their time.
 
 ---
 
-## 🐮 Quickstart
+## Quickstart
 
 The control plane lives under `control-plane/` and is driven by [`uv`](https://github.com/astral-sh/uv).
 
@@ -111,10 +110,10 @@ for prerequisites and the one-shot deploy script.
 
 ---
 
-## 🍃 How the herd thinks
+## How a turn runs
 
 A message hits the webhook, the queue grabs it, a worker leases the turn, and
-the right runtime takes over. Every brain routes through the same ACL.
+the assigned runtime takes over. Every runtime routes through the same ACL.
 
 ```
 Zulip message ──▶ POST /zulip/incoming ──▶ validate · dedupe · 👍 ──▶ enqueue Job
@@ -140,7 +139,7 @@ Zulip message ──▶ POST /zulip/incoming ──▶ validate · dedupe · �
                          edit the 🤔 placeholder into the reply
 ```
 
-### Three brains, one ACL
+### Three runtimes, one ACL
 
 Each agent picks its inner runtime via `agents.runtime_kind` (default
 `openai_tool_loop`) plus a `runtime_config` JSON blob.
@@ -152,7 +151,7 @@ Each agent picks its inner runtime via `agents.runtime_kind` (default
 | **`codex`** | Long-running coding work | Spawns the codex CLI in a per-topic git workspace; sandbox modes (read-only · workspace-write · danger-full-access); skills mounted as markdown into `.agents/skills/`. |
 
 All three go through the same `ToolRuntime` ACL, so permissions are enforced
-once, identically, no matter which brain is driving.
+once, identically, no matter which runtime is driving.
 
 ### Agents, sessions, and the pool
 
@@ -176,26 +175,26 @@ Even administration stays conversational.
 
 ---
 
-## 🐄 What's in the barn
+## Feature overview
 
 | Area | What's there |
 |---|---|
 | **Ingestion** | Webhook validation, per-agent outgoing-token HMAC check, `message.id` dedupe, 👍 ack, in-process job queue with N workers. |
 | **Agent registry** | CRUD over agents; manual or auto-provisioned Zulip bots (create, subscribe, set webhook). Secrets Fernet-encrypted at rest. |
 | **Archetypes / Sessions / Pool** | Reusable blueprints, disposable per-topic instances, recycled bot accounts. |
-| **Bastion** | Privileged in-chat meta-agent for spawning and configuring the rest of the herd. |
+| **Bastion** | Privileged in-chat meta-agent for spawning and configuring other agents. |
 | **Multi-runtime** | `openai_tool_loop`, `deepagents`, and `codex` behind one router and one ACL. |
 | **Tools** | Memory, cross-topic messaging, scheduling, knowledge artifacts, Tavily search/crawl, `exec_mcp` command execution (with a human-confirm gate), Google Calendar/Tasks, image generation, Playwright browser goals, interactive HTML forms. |
 | **Context substrate** | Tiered memory namespaces (`agent:*`, `topic:*`, `channel:*`, `workspace`, session) with a **librarian write-gate**; Postgres-backed knowledge artifacts; skills catalog. |
 | **Scheduling** | Agent-callable one-shot and recurring scheduling on a custom poll-loop. |
 | **Interactive artifacts** | Agents return signed, expiring, submittable single-page HTML forms via `create_interactive_response`. |
-| **Containment** | Per-runtime ACL chokepoint, librarian gate, exec confirm-word, **DarkClaw tripwire** (sandbox agents shut down mid-turn if they acquire tools beyond their baseline). |
+| **Containment** | Per-runtime ACL chokepoint, librarian gate, exec confirm-word, and a tripwire that shuts an agent down mid-turn if it acquires tools beyond its baseline. |
 | **Observability** | OpenTelemetry spans, a durable audit event log, and a live SSE event stream (turn / LLM / tool / reasoning / error). |
 | **WhatsApp sidecar** | Optional read-only Baileys connector streaming incoming messages over a loopback SSE feed. |
 
 ---
 
-## 🍵 Configuration & prerequisites
+## Configuration & prerequisites
 
 You'll want these on hand before running the control plane:
 
@@ -219,7 +218,7 @@ Tavily) go in [`.mcp.json.example`](.mcp.json.example).
 
 ---
 
-## 🐮 Repository layout
+## Repository layout
 
 ```
 control-plane/              FastAPI control plane (the heart of the system)
@@ -239,7 +238,7 @@ infra/                      OpenTofu IaC: Hetzner box, tunnel, Tailscale, GitOps
 
 ---
 
-## 🍃 Stack
+## Stack
 
 FastAPI · async SQLAlchemy 2 + asyncpg (any Postgres) · OpenAI SDK ·
 LangChain / LangGraph / `deepagents` · codex CLI · Playwright · Fernet
@@ -248,11 +247,10 @@ named tunnel · Tailscale · OpenTofu · `uv`.
 
 ---
 
-## 🐄 Joining the herd
+## Contributing
 
-New cows welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get involved,
-and [SECURITY.md](SECURITY.md) for how to report anything that smells off in the
-enclosure.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get involved, and
+[SECURITY.md](SECURITY.md) for how to report a vulnerability.
 
 ## License
 

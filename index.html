@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Moomacha — A Matcha-Fueled Marketing Agency</title>
+<title>Moomacha — An Agent Orchestration Chat Control Plane</title>
+<meta name="description" content="Moomacha is an open-source chat-based control plane for AI agents. Spawn, configure, and audit agents from inside Zulip — the chat is the control surface.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -320,7 +321,7 @@
       <img src="logo.png" alt="Moomacha">
       <span class="nav-brand-name">Moomacha</span>
     </div>
-    <a class="btn btn-primary btn-sm" href="https://github.com/oxedom/agent-control-plane" target="_blank" rel="noopener">
+    <a class="btn btn-primary btn-sm" href="https://github.com/oxedom/moomacha" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
       Star on GitHub
     </a>
@@ -333,21 +334,21 @@
           <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
           <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
         </svg>
-        <span class="moo-eyebrow">A Matcha-Fueled Marketing Agency</span>
+        <span class="moo-eyebrow">An Agent Orchestration Chat Control Plane</span>
         <svg width="26" height="18" viewBox="0 0 34 22" fill="none" style="transform: scaleX(-1)" aria-hidden="true">
           <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
           <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
         </svg>
       </div>
       <h1>
-        <span class="ink">Creative Ideas.</span><br>
-        <span class="peach">Happy Clients.</span><br>
-        <span class="matcha">Mooore Impact.</span>
+        <span class="ink">Spin up an agent.</span><br>
+        <span class="peach">Grant it a capability.</span><br>
+        <span class="matcha">Never leave the chat.</span>
       </h1>
       <p class="lead">
-        A playful, <em>open-source</em> herd of cow agents crafting brands, campaigns, and content that make people say <em>"udderly amazing!"</em> — fork it, remix it, make it moo.
+        Moomacha is an <em>open-source</em> control plane for AI agents that live as coworkers in Zulip topics — their own bot identity, memory, tools, and permissions. You configure them the same way you'd loop in a teammate.
       </p>
-      <a class="btn btn-primary btn-lg" href="https://github.com/oxedom/agent-control-plane" target="_blank" rel="noopener">
+      <a class="btn btn-primary btn-lg" href="https://github.com/oxedom/moomacha" target="_blank" rel="noopener">
         Browse the Source
         <span class="btn-icon-circle" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -355,12 +356,10 @@
       </a>
       <div class="hero-trust">
         <div class="hero-trust-line">
-          <span class="heart" aria-hidden="true">♥</span>
-          Trusted by awesome brands
-          <span class="heart" aria-hidden="true">♥</span>
+          Built on
         </div>
         <div class="hero-brands">
-          <span>moogurt</span><span>leafy.</span><span>bloom</span><span>cupful</span>
+          <span>FastAPI</span><span>Postgres</span><span>OpenAI</span><span>Zulip</span>
         </div>
       </div>
     </div>
@@ -380,14 +379,14 @@
           <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
           <path d="M22 7c-3-1-4-4-4-4s3-1 5 0 3 4 3 4-1 1-4 0Z" fill="var(--color-matcha)"/>
         </svg>
-        <h2>Meet the Agents</h2>
+        <h2>How it works</h2>
         <svg width="34" height="22" viewBox="0 0 34 22" fill="none" style="transform: scaleX(-1)" aria-hidden="true">
           <path d="M2 20C2 20 6 8 18 6C30 4 32 2 32 2" stroke="var(--color-matcha-deep)" stroke-width="2" stroke-linecap="round"/>
           <path d="M12 11c-3-1-5-4-5-4s3-1 6 0 4 4 4 4-2 1-5 0Z" fill="var(--color-matcha)"/>
           <path d="M22 7c-3-1-4-4-4-4s3-1 5 0 3 4 3 4-1 1-4 0Z" fill="var(--color-matcha)"/>
         </svg>
       </div>
-      <p>Different skills. One herd. Big results.</p>
+      <p>One chat surface. Three runtimes underneath.</p>
     </div>
     <div class="agents-grid">
       <article class="feature-card">
@@ -397,9 +396,9 @@
             <path d="M14 6.5 18 3l3 3-3.5 4M14 6.5 17.5 10M14 6.5l3.5 3.5"/>
           </svg>
         </div>
-        <h4>Design</h4>
-        <p>We create scroll-stopping visuals that tell your story beautifully.</p>
-        <a href="#" style="color: var(--color-peach-deep);">View Work →</a>
+        <h4>The Bastion</h4>
+        <p>A privileged in-chat meta-agent. Talk to it to spawn, configure, and grant capabilities to the rest of your agents — no admin panel required.</p>
+        <a href="https://github.com/oxedom/moomacha#the-bastion" style="color: var(--color-peach-deep);" target="_blank" rel="noopener">Read more →</a>
       </article>
       <article class="feature-card">
         <div class="feature-badge" style="background: var(--color-blue);">
@@ -407,9 +406,9 @@
             <path d="m9 16-4-4 4-4M15 8l4 4-4 4"/>
           </svg>
         </div>
-        <h4>Developer</h4>
-        <p>We build fast, responsive websites that work like a charm.</p>
-        <a href="#" style="color: var(--color-blue-deep);">See Projects →</a>
+        <h4>Three runtimes, one ACL</h4>
+        <p><code>openai_tool_loop</code>, <code>deepagents</code>, or <code>codex</code> — pick per agent. Every tool call still passes through the same <code>ToolRuntime</code> chokepoint.</p>
+        <a href="https://github.com/oxedom/moomacha#three-runtimes-one-acl" style="color: var(--color-blue-deep);" target="_blank" rel="noopener">See the runtimes →</a>
       </article>
       <article class="feature-card">
         <div class="feature-badge" style="background: var(--color-yellow-deep);">
@@ -418,14 +417,17 @@
             <path d="M7 12v6M17 9a3 3 0 0 1 0 6"/>
           </svg>
         </div>
-        <h4>Strategy</h4>
-        <p>We plan smart campaigns that grow your brand and audience.</p>
-        <a href="#" style="color: var(--color-yellow-deep);">Learn More →</a>
+        <h4>Containment by design</h4>
+        <p>A librarian gate on memory writes, an exec confirm-word, and a tripwire that shuts an agent down if it acquires tools beyond its baseline.</p>
+        <a href="https://github.com/oxedom/moomacha#feature-overview" style="color: var(--color-yellow-deep);" target="_blank" rel="noopener">See the gates →</a>
       </article>
     </div>
   </section>
 
   <section class="values" id="about">
+    <div class="section-heading" style="padding-bottom: 24px;">
+      <h2 style="font-size: var(--text-h2);">Design principles</h2>
+    </div>
     <div class="values-grid">
       <div class="value-card matcha">
         <div class="value-icon-wrap">
@@ -437,8 +439,8 @@
           </div>
           <span class="value-spark" aria-hidden="true">✦</span>
         </div>
-        <h4>Kindness</h4>
-        <p>We care for our clients, our community, and our planet.</p>
+        <h4>Async by default</h4>
+        <p>Agents can take a minute, schedule something for tomorrow, or come back next week. Chat is the one substrate where that's normal.</p>
       </div>
       <div class="value-card peach">
         <div class="value-icon-wrap">
@@ -449,8 +451,8 @@
           </div>
           <span class="value-spark" aria-hidden="true">✦</span>
         </div>
-        <h4>Focus</h4>
-        <p>We stay present and get things done with heart and hustle.</p>
+        <h4>Privilege on the agent</h4>
+        <p>Capabilities live on the agent record, not the user. Even an admin can't make an agent exceed its own flags.</p>
       </div>
       <div class="value-card blue">
         <div class="value-icon-wrap">
@@ -463,8 +465,8 @@
           </div>
           <span class="value-spark" aria-hidden="true">✦</span>
         </div>
-        <h4>Teamwork</h4>
-        <p>We mooove together, support each other, and win together.</p>
+        <h4>Containment is structural</h4>
+        <p>A librarian gate, an exec confirm-word, and a tripwire that shuts down agents that overreach.</p>
       </div>
       <div class="value-card yellow">
         <div class="value-icon-wrap">
@@ -476,8 +478,8 @@
           </div>
           <span class="value-spark" aria-hidden="true">✦</span>
         </div>
-        <h4>Energy</h4>
-        <p>Good matcha. Good vibes. Great ideas.</p>
+        <h4>Humans hold the keys</h4>
+        <p>You configure personas, grant capabilities, and stay in the loop on anything that matters.</p>
       </div>
     </div>
   </section>
@@ -486,16 +488,16 @@
     <div class="footer-cta">
       <span class="spark-tl" aria-hidden="true">✦</span>
       <span class="spark-br" aria-hidden="true">✦</span>
-      <h2>100% open source,<br>0% lactose intolerant.</h2>
-      <p>Free as in matcha. Clone the herd, send a PR, or just leave a ⭐ on GitHub.</p>
+      <h2>Open source.<br>Talk to it.</h2>
+      <p>FSL-1.1-ALv2 — free for any use except a competing hosted service. Clone it, run it, send a PR.</p>
       <div class="footer-cta-actions">
-        <a class="btn btn-secondary btn-lg" href="https://github.com/oxedom/agent-control-plane" target="_blank" rel="noopener">
+        <a class="btn btn-secondary btn-lg" href="https://github.com/oxedom/moomacha" target="_blank" rel="noopener">
           View on GitHub
           <span class="btn-icon-circle" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
           </span>
         </a>
-        <a class="btn btn-ghost btn-lg" href="https://github.com/oxedom/agent-control-plane#readme" target="_blank" rel="noopener">Read the README</a>
+        <a class="btn btn-ghost btn-lg" href="https://github.com/oxedom/moomacha#readme" target="_blank" rel="noopener">Read the README</a>
       </div>
     </div>
     <div class="footer-bar">
@@ -503,7 +505,7 @@
         <img src="logo.png" alt="">
         <span>Moomacha</span>
       </div>
-      <span>© 2026 Moomacha · Grow Together, Work Better 🐮</span>
+      <span>© 2026 Moomacha · An agent orchestration chat control plane</span>
     </div>
   </footer>
 
